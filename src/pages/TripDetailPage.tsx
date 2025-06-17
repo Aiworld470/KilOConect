@@ -198,8 +198,8 @@ const TripDetailPage: React.FC = () => {
               </div>
             )}
 
-            {/* Security Approach */}
-            <SecurityApproach />
+            {/* Security Approach for Senders */}
+            <SecurityApproach userType="sender" />
 
             {/* Transporter profile */}
             <UserProfile user={trip.transporter} showFullInfo />

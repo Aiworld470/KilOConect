@@ -307,8 +307,8 @@ const BookingPage: React.FC = () => {
               </form>
             </div>
 
-            {/* Security Approach */}
-            <SecurityApproach />
+            {/* Security Approach for Senders */}
+            <SecurityApproach userType="sender" />
           </div>
 
           {/* Sidebar */}
