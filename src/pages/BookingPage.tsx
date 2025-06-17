@@ -9,6 +9,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useBooking } from '../contexts/BookingContext';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { SecurityApproach } from '../components/security/SecurityApproach';
 
 const BookingPage: React.FC = () => {
   const { tripId } = useParams<{ tripId: string }>();
@@ -305,6 +306,9 @@ const BookingPage: React.FC = () => {
                 )}
               </form>
             </div>
+
+            {/* Security Approach */}
+            <SecurityApproach />
           </div>
 
           {/* Sidebar */}
@@ -370,7 +374,7 @@ const BookingPage: React.FC = () => {
                   </div>
                   <div className="flex items-center space-x-2 text-sm text-gray-600 mt-2">
                     <Package className="h-4 w-4 text-green-500" />
-                    <span>Assurance incluse</span>
+                    <span>Transport à vos risques</span>
                   </div>
                 </div>
               </div>

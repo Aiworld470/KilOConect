@@ -380,8 +380,8 @@ const PaymentPage: React.FC = () => {
                   <span>Paiement 100% sécurisé</span>
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-gray-600 mt-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span>Remboursement garanti</span>
+                  <Shield className="h-4 w-4 text-yellow-500" />
+                  <span>Transport à vos risques</span>
                 </div>
               </div>
             </div>

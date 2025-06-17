@@ -25,8 +25,8 @@ const pricingTiers: PricingTier[] = [
     description: 'Solution abordable pour colis non urgents',
     multiplier: 1.0,
     features: [
-      'Livraison standard',
-      'Assurance de base',
+      'Transport sécurisé',
+      'Vérification identité',
       'Suivi en ligne',
       'Support client'
     ]
@@ -37,11 +37,11 @@ const pricingTiers: PricingTier[] = [
     description: 'Service équilibré qualité/prix',
     multiplier: 1.3,
     features: [
-      'Livraison prioritaire',
-      'Assurance étendue',
+      'Transport prioritaire',
       'Suivi temps réel',
       'Support prioritaire',
-      'Photos de livraison'
+      'Photos de livraison',
+      'Médiation gratuite'
     ],
     recommended: true
   },
@@ -51,8 +51,7 @@ const pricingTiers: PricingTier[] = [
     description: 'Service premium pour colis urgents',
     multiplier: 1.8,
     features: [
-      'Livraison express',
-      'Assurance premium',
+      'Transport express',
       'Suivi GPS temps réel',
       'Support VIP 24/7',
       'Photos + vidéo livraison',

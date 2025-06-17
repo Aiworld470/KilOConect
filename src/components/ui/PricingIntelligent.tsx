@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Euro, TrendingUp, Shield, Info, BarChart3 } from 'lucide-react';
+import { Euro, TrendingUp, Shield, Info, BarChart3, AlertTriangle } from 'lucide-react';
 
 interface PricingTier {
   id: 'economique' | 'standard' | 'express';
@@ -31,28 +31,40 @@ export const PricingIntelligent: React.FC<PricingIntelligentProps> = ({
 }) => {
   const [showBreakdown, setShowBreakdown] = useState(false);
 
-  // Calcul de prix simple basé sur la distance estimée
-  const calculateBasePrice = () => {
-    // Prix de base selon la popularité de la route
-    const popularRoutes = [
-      { route: 'Paris-Dakar', basePrice: 25 },
-      { route: 'Londres-Lagos', basePrice: 30 },
-      { route: 'Bruxelles-Kinshasa', basePrice: 28 },
-      { route: 'Milan-Casablanca', basePrice: 22 },
-      { route: 'Madrid-Bamako', basePrice: 26 },
-    ];
+  // Calcul de prix adapté au marché africain
+  const calculateRegionalPricing = () => {
+    const routeType = getRouteType(origin, destination);
+    const basePrices = {
+      'Europe-Africa': { eco: 10, std: 15, exp: 22 },
+      'Africa-Africa': { eco: 4, std: 7, exp: 12 },
+      'Europe-Europe': { eco: 6, std: 10, exp: 16 },
+      'America-Africa': { eco: 12, std: 18, exp: 25 }
+    };
 
-    const routeKey = `${origin.split(',')[0]}-${destination.split(',')[0]}`;
-    const reverseRouteKey = `${destination.split(',')[0]}-${origin.split(',')[0]}`;
-    
-    const foundRoute = popularRoutes.find(r => 
-      r.route === routeKey || r.route === reverseRouteKey
-    );
-
-    return foundRoute ? foundRoute.basePrice : 24; // Prix par défaut
+    return basePrices[routeType as keyof typeof basePrices] || basePrices['Europe-Africa'];
   };
 
-  const basePrice = calculateBasePrice();
+  const getRouteType = (origin: string, destination: string) => {
+    const getContinent = (city: string) => {
+      const europeanCities = ['Paris', 'Londres', 'Bruxelles', 'Milan', 'Madrid', 'Berlin'];
+      const africanCities = ['Dakar', 'Lagos', 'Abidjan', 'Casablanca', 'Bamako', 'Accra', 'Kinshasa'];
+      const americanCities = ['New York', 'Toronto', 'Los Angeles', 'Chicago', 'Miami'];
+      
+      const cityName = city.split(',')[0].trim();
+      
+      if (europeanCities.includes(cityName)) return 'Europe';
+      if (africanCities.includes(cityName)) return 'Africa';
+      if (americanCities.includes(cityName)) return 'America';
+      return 'Europe';
+    };
+
+    const originContinent = getContinent(origin);
+    const destinationContinent = getContinent(destination);
+    return `${originContinent}-${destinationContinent}`;
+  };
+
+  const basePrices = calculateRegionalPricing();
+  const routeType = getRouteType(origin, destination);
 
   // Ajustement selon le rating du transporteur
   const ratingMultiplier = transporterRating >= 4.5 ? 1.1 : 
@@ -62,11 +74,11 @@ export const PricingIntelligent: React.FC<PricingIntelligentProps> = ({
     {
       id: 'economique',
       name: '💰 Économique',
-      description: 'Votre prix pour ce service',
+      description: 'Prix optimal pour votre budget',
       multiplier: 1.0,
       features: [
-        'Livraison standard',
-        'Assurance de base',
+        'Transport sécurisé',
+        'Vérification identité',
         'Suivi en ligne',
         'Support client'
       ]
@@ -77,11 +89,11 @@ export const PricingIntelligent: React.FC<PricingIntelligentProps> = ({
       description: '+15% - Service premium',
       multiplier: 1.15,
       features: [
-        'Livraison prioritaire',
-        'Assurance étendue',
+        'Transport prioritaire',
         'Suivi temps réel',
         'Support prioritaire',
-        'Photos de livraison'
+        'Photos de livraison',
+        'Médiation gratuite'
       ],
       recommended: true
     },
@@ -91,17 +103,18 @@ export const PricingIntelligent: React.FC<PricingIntelligentProps> = ({
       description: '+30% - Priorité absolue',
       multiplier: 1.30,
       features: [
-        'Livraison express',
-        'Assurance premium',
+        'Transport express',
         'Suivi GPS temps réel',
         'Support VIP 24/7',
         'Photos + vidéo livraison',
-        'Remise en main propre'
+        'Remise en main propre',
+        'Garantie délai'
       ]
     }
   ];
 
   const getPrice = (tier: PricingTier) => {
+    const basePrice = routeType.includes('Africa-Africa') ? basePrices.eco * 0.85 : basePrices.eco;
     return Math.round(basePrice * tier.multiplier * ratingMultiplier);
   };
 
@@ -109,16 +122,22 @@ export const PricingIntelligent: React.FC<PricingIntelligentProps> = ({
     const originCity = origin.split(',')[0];
     const destinationCity = destination.split(',')[0];
     
-    // Distance estimée simple
-    const estimatedDistance = originCity === 'Paris' && destinationCity === 'Dakar' ? 4200 :
-                             originCity === 'Londres' && destinationCity === 'Lagos' ? 5100 :
-                             originCity === 'Bruxelles' && destinationCity === 'Kinshasa' ? 6200 :
-                             4500; // Distance par défaut
+    // Distance estimée selon le type de route
+    const distances = {
+      'Europe-Africa': 4500,
+      'Africa-Africa': 2500,
+      'America-Africa': 8000,
+      'Europe-Europe': 2000
+    };
+
+    const estimatedDistance = distances[routeType as keyof typeof distances] || 4500;
 
     return {
       distance: estimatedDistance,
-      category: 'Populaire',
-      estimatedDemand: 'Moyenne'
+      category: routeType.includes('Africa-Africa') ? 'Route locale' : 
+               routeType.includes('Europe-Africa') ? 'Route diaspora' : 'Route internationale',
+      estimatedDemand: routeType.includes('Europe-Africa') ? 'Forte' : 'Moyenne',
+      priceLevel: routeType.includes('Africa-Africa') ? 'Économique' : 'Standard'
     };
   };
 
@@ -129,10 +148,10 @@ export const PricingIntelligent: React.FC<PricingIntelligentProps> = ({
       <div className="text-center">
         <div className="flex items-center justify-center space-x-2 mb-4">
           <TrendingUp className="h-6 w-6 text-primary-600" />
-          <h3 className="text-xl font-semibold text-gray-800">Choisissez votre stratégie tarifaire</h3>
+          <h3 className="text-xl font-semibold text-gray-800">Tarification Libre Optimisée</h3>
         </div>
         <p className="text-gray-600">
-          Positionnez vos prix selon votre stratégie commerciale
+          Fixez vos prix selon votre stratégie commerciale
         </p>
       </div>
 
@@ -140,20 +159,24 @@ export const PricingIntelligent: React.FC<PricingIntelligentProps> = ({
       <div className="bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-200 rounded-2xl p-4">
         <div className="flex items-center space-x-3 mb-3">
           <BarChart3 className="h-5 w-5 text-primary-600" />
-          <h4 className="font-medium text-primary-900">Analyse de route</h4>
+          <h4 className="font-medium text-primary-900">Analyse de marché</h4>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div>
             <span className="text-primary-700 font-medium">Distance:</span>
             <div className="text-primary-900">{routeInfo.distance.toLocaleString()} km</div>
           </div>
           <div>
-            <span className="text-primary-700 font-medium">Popularité:</span>
+            <span className="text-primary-700 font-medium">Type:</span>
             <div className="text-primary-900">{routeInfo.category}</div>
           </div>
           <div>
             <span className="text-primary-700 font-medium">Demande:</span>
             <div className="text-primary-900">{routeInfo.estimatedDemand}</div>
+          </div>
+          <div>
+            <span className="text-primary-700 font-medium">Niveau:</span>
+            <div className="text-primary-900">{routeInfo.priceLevel}</div>
           </div>
         </div>
       </div>
@@ -200,7 +223,7 @@ export const PricingIntelligent: React.FC<PricingIntelligentProps> = ({
                   <span className="text-gray-500">/kg</span>
                 </div>
                 <div className="text-xs text-gray-500 mt-1">
-                  Prix suggéré
+                  Prix suggéré marché
                 </div>
               </div>
 
@@ -223,6 +246,71 @@ export const PricingIntelligent: React.FC<PricingIntelligentProps> = ({
             </div>
           );
         })}
+      </div>
+
+      {/* NOUVELLE APPROCHE SÉCURITÉ - SANS ASSURANCE */}
+      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6">
+        <div className="flex items-center space-x-3 mb-4">
+          <Shield className="h-5 w-5 text-green-600" />
+          <h3 className="font-medium text-green-900">🛡️ Sécurité par confiance</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="flex items-start space-x-3">
+            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mt-0.5">
+              <span className="text-green-600 text-lg">🆔</span>
+            </div>
+            <div>
+              <h4 className="font-medium text-green-800">Vérification identité</h4>
+              <p className="text-sm text-green-700">Tous les transporteurs vérifiés</p>
+            </div>
+          </div>
+          
+          <div className="flex items-start space-x-3">
+            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mt-0.5">
+              <span className="text-green-600 text-lg">⭐</span>
+            </div>
+            <div>
+              <h4 className="font-medium text-green-800">Système de notation</h4>
+              <p className="text-sm text-green-700">Transparence totale sur historique</p>
+            </div>
+          </div>
+          
+          <div className="flex items-start space-x-3">
+            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mt-0.5">
+              <span className="text-green-600 text-lg">📍</span>
+            </div>
+            <div>
+              <h4 className="font-medium text-green-800">Suivi temps réel</h4>
+              <p className="text-sm text-green-700">Visibilité complète trajet</p>
+            </div>
+          </div>
+          
+          <div className="flex items-start space-x-3">
+            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mt-0.5">
+              <span className="text-green-600 text-lg">🤝</span>
+            </div>
+            <div>
+              <h4 className="font-medium text-green-800">Médiation gratuite</h4>
+              <p className="text-sm text-green-700">Résolution conflits par équipe</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <div className="flex items-start space-x-3">
+            <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
+            <div>
+              <h4 className="font-medium text-yellow-800 mb-1">⚠️ Important</h4>
+              <p className="text-sm text-yellow-700">
+                Le transport s'effectue aux risques de l'expéditeur. 
+                KiloConnect facilite la mise en relation mais ne garantit 
+                pas la livraison. Vérifiez soigneusement le profil 
+                du transporteur avant envoi.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Strategy Explanation */}

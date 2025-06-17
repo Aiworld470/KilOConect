@@ -9,6 +9,7 @@ import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { useAuth } from '../contexts/AuthContext';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { SecurityApproach } from '../components/security/SecurityApproach';
 
 const TripDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -197,6 +198,9 @@ const TripDetailPage: React.FC = () => {
               </div>
             )}
 
+            {/* Security Approach */}
+            <SecurityApproach />
+
             {/* Transporter profile */}
             <UserProfile user={trip.transporter} showFullInfo />
 
@@ -302,8 +306,8 @@ const TripDetailPage: React.FC = () => {
                     <span>Paiement sécurisé</span>
                   </div>
                   <div className="flex items-center space-x-2 text-sm text-gray-600 mt-2">
-                    <Shield className="h-4 w-4 text-green-500" />
-                    <span>Assurance incluse</span>
+                    <Shield className="h-4 w-4 text-yellow-500" />
+                    <span>Transport à vos risques</span>
                   </div>
                 </div>
               </div>
