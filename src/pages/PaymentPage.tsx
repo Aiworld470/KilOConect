@@ -3,15 +3,20 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CreditCard, Shield, Lock, CheckCircle } from 'lucide-react';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 import { paymentService } from '../services/paymentService';
+import { MobileMoneyPayment } from '../components/payment/MobileMoneyPayment';
+import { useAfricanLocalization } from '../hooks/useAfricanLocalization';
+import { SecurityApproach } from '../components/security/SecurityApproach';
 
 const PaymentPage: React.FC = () => {
   const { bookingId } = useParams<{ bookingId: string }>();
   const navigate = useNavigate();
+  const { formatPrice } = useAfricanLocalization();
   
   const [isLoading, setIsLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [countryCode, setCountryCode] = useState('SN'); // Détection automatique en production
 
   // Mock booking data
   const booking = {
@@ -77,6 +82,23 @@ const PaymentPage: React.FC = () => {
     }
   };
 
+  const handleMobileMoneySuccess = (transaction: any) => {
+    setPaymentSuccess(true);
+    
+    // Redirect to success page after a delay
+    setTimeout(() => {
+      navigate('/dashboard', { 
+        state: { 
+          message: 'Paiement Mobile Money effectué avec succès ! Votre réservation est confirmée.' 
+        }
+      });
+    }, 2000);
+  };
+
+  const handleMobileMoneyError = (errorMessage: string) => {
+    setError(errorMessage);
+  };
+
   const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
     const matches = v.match(/\d{4,16}/g);
@@ -98,6 +120,12 @@ const PaymentPage: React.FC = () => {
       return v.substring(0, 2) + '/' + v.substring(2, 4);
     }
     return v;
+  };
+
+  // Détecter si la destination est en Afrique pour proposer Mobile Money
+  const isAfricanDestination = () => {
+    const africanCountries = ['Sénégal', 'Nigeria', 'Ghana', 'Côte d\'Ivoire', 'Kenya', 'Maroc'];
+    return africanCountries.includes(booking.trip.destination.country);
   };
 
   if (paymentSuccess) {
@@ -146,7 +174,7 @@ const PaymentPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Payment form */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
               <div className="flex items-center space-x-2 mb-6">
                 <Shield className="h-5 w-5 text-green-500" />
                 <span className="text-sm text-gray-600">
@@ -154,54 +182,79 @@ const PaymentPage: React.FC = () => {
                 </span>
               </div>
 
-              <form onSubmit={handlePayment} className="space-y-6">
-                {error && (
-                  <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                    {error}
-                  </div>
-                )}
+              {/* Payment method selection */}
+              <div className="mb-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Méthode de paiement
+                </h3>
+                
+                <div className="space-y-3">
+                  <label className={`
+                    flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50
+                    ${paymentMethod === 'card' ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}
+                  `}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="card"
+                      checked={paymentMethod === 'card'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="h-4 w-4 text-primary-600 focus:ring-primary-500"
+                    />
+                    <div className="ml-3 flex items-center space-x-3">
+                      <CreditCard className="h-5 w-5 text-gray-400" />
+                      <span className="font-medium text-gray-900">Carte bancaire</span>
+                    </div>
+                  </label>
 
-                {/* Payment method selection */}
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">
-                    Méthode de paiement
-                  </h3>
-                  
-                  <div className="space-y-3">
-                    <label className="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+                  {isAfricanDestination() && (
+                    <label className={`
+                      flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50
+                      ${paymentMethod === 'mobile_money' ? 'border-primary-500 bg-primary-50' : 'border-gray-200'}
+                    `}>
                       <input
                         type="radio"
                         name="paymentMethod"
-                        value="card"
-                        checked={paymentMethod === 'card'}
+                        value="mobile_money"
+                        checked={paymentMethod === 'mobile_money'}
                         onChange={(e) => setPaymentMethod(e.target.value)}
                         className="h-4 w-4 text-primary-600 focus:ring-primary-500"
                       />
                       <div className="ml-3 flex items-center space-x-3">
-                        <CreditCard className="h-5 w-5 text-gray-400" />
-                        <span className="font-medium text-gray-900">Carte bancaire</span>
+                        <div className="w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">M</span>
+                        </div>
+                        <span className="font-medium text-gray-900">Mobile Money</span>
                       </div>
                     </label>
+                  )}
 
-                    <label className="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 opacity-50">
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="paypal"
-                        disabled
-                        className="h-4 w-4 text-primary-600 focus:ring-primary-500"
-                      />
-                      <div className="ml-3 flex items-center space-x-3">
-                        <div className="w-5 h-5 bg-blue-600 rounded"></div>
-                        <span className="font-medium text-gray-900">PayPal</span>
-                        <span className="text-xs text-gray-500">(Bientôt disponible)</span>
-                      </div>
-                    </label>
-                  </div>
+                  <label className="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 opacity-50">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="paypal"
+                      disabled
+                      className="h-4 w-4 text-primary-600 focus:ring-primary-500"
+                    />
+                    <div className="ml-3 flex items-center space-x-3">
+                      <div className="w-5 h-5 bg-blue-600 rounded"></div>
+                      <span className="font-medium text-gray-900">PayPal</span>
+                      <span className="text-xs text-gray-500">(Bientôt disponible)</span>
+                    </div>
+                  </label>
                 </div>
+              </div>
 
-                {/* Card details */}
-                {paymentMethod === 'card' && (
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm mb-6">
+                  {error}
+                </div>
+              )}
+
+              {/* Card payment form */}
+              {paymentMethod === 'card' && (
+                <form onSubmit={handlePayment} className="space-y-6">
                   <div className="space-y-4">
                     <h4 className="font-medium text-gray-900">Détails de la carte</h4>
                     
@@ -278,32 +331,46 @@ const PaymentPage: React.FC = () => {
                       />
                     </div>
                   </div>
-                )}
 
-                <button
-                  type="submit"
-                  disabled={isProcessing}
-                  className="w-full bg-primary-600 text-white py-3 rounded-md hover:bg-primary-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                >
-                  {isProcessing ? (
-                    <>
-                      <LoadingSpinner size="sm" />
-                      <span className="ml-2">Traitement en cours...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Lock className="h-4 w-4 mr-2" />
-                      Payer {fees.total}€
-                    </>
-                  )}
-                </button>
+                  <button
+                    type="submit"
+                    disabled={isProcessing}
+                    className="w-full bg-primary-600 text-white py-3 rounded-md hover:bg-primary-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <LoadingSpinner size="sm" />
+                        <span className="ml-2">Traitement en cours...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="h-4 w-4 mr-2" />
+                        Payer {fees.total}€
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
 
-                <div className="text-xs text-gray-500 text-center">
-                  En cliquant sur "Payer", vous acceptez nos conditions d'utilisation
-                  et notre politique de remboursement.
-                </div>
-              </form>
+              {/* Mobile Money payment */}
+              {paymentMethod === 'mobile_money' && (
+                <MobileMoneyPayment
+                  amount={fees.total}
+                  currency="XOF"
+                  countryCode={countryCode}
+                  onSuccess={handleMobileMoneySuccess}
+                  onError={handleMobileMoneyError}
+                />
+              )}
+
+              <div className="text-xs text-gray-500 text-center mt-6">
+                En cliquant sur "Payer", vous acceptez nos conditions d'utilisation
+                et notre politique de remboursement.
+              </div>
             </div>
+
+            {/* Security Approach */}
+            <SecurityApproach />
           </div>
 
           {/* Order summary */}

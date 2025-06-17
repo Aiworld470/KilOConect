@@ -6,6 +6,8 @@ import { Message, User } from '../types';
 import { users, mockMessages } from '../data/mockData';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useAIBypassDetection } from '../hooks/useAI';
+import { AISecurityAlert } from '../components/ai/AISecurityAlert';
 
 const ChatPage: React.FC = () => {
   const { user } = useAuth();
@@ -14,6 +16,8 @@ const ChatPage: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { detection, analyzeMessage } = useAIBypassDetection();
+  const [securityAlert, setSecurityAlert] = useState<any>(null);
 
   // Mock conversations list
   const conversations = [
@@ -59,11 +63,49 @@ const ChatPage: React.FC = () => {
     
     if (!newMessage.trim() || !selectedChat) return;
 
+    // Analyse IA pour détecter les tentatives de contournement
+    const context = {
+      conversationHistory: conversationMessages,
+      user: user,
+      selectedChat
+    };
+    
+    const securityCheck = analyzeMessage(newMessage, context);
+    
+    if (securityCheck.riskScore > 0.5) {
+      // Message suspect - afficher alerte
+      setSecurityAlert(securityCheck);
+      return;
+    }
+
     try {
       await sendMessage(selectedChat, newMessage.trim());
       setNewMessage('');
+      setSecurityAlert(null);
     } catch (error) {
       console.error('Error sending message:', error);
+    }
+  };
+
+  const handleSecurityAction = (action: string) => {
+    console.log('Security action:', action);
+    
+    if (action.includes('Bloquer')) {
+      // Bloquer le message
+      setNewMessage('');
+      setSecurityAlert(null);
+    } else if (action.includes('Avertir')) {
+      // Avertir l'utilisateur mais permettre l'envoi
+      if (window.confirm('Ce message pourrait contenir des informations de contact personnelles. L\'échange d\'informations de contact en dehors de la plateforme est interdit et peut entraîner la suspension de votre compte. Souhaitez-vous modifier votre message ?')) {
+        return;
+      } else {
+        sendMessage(selectedChat!, newMessage.trim());
+        setNewMessage('');
+        setSecurityAlert(null);
+      }
+    } else {
+      // Action par défaut
+      setSecurityAlert(null);
     }
   };
 
@@ -245,6 +287,16 @@ const ChatPage: React.FC = () => {
               <div ref={messagesEndRef} />
             </div>
 
+            {/* Security Alert */}
+            {securityAlert && (
+              <div className="px-4 mb-4">
+                <AISecurityAlert 
+                  detection={securityAlert} 
+                  onAction={handleSecurityAction} 
+                />
+              </div>
+            )}
+
             {/* Message input */}
             <div className="bg-white border-t border-gray-200 p-4">
               <form onSubmit={handleSendMessage} className="flex items-center space-x-3">
@@ -267,7 +319,7 @@ const ChatPage: React.FC = () => {
 
                 <button
                   type="submit"
-                  disabled={!newMessage.trim()}
+                  disabled={!newMessage.trim() || !!securityAlert}
                   className="p-2 bg-primary-600 text-white rounded-full hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <Send className="h-5 w-5" />

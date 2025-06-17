@@ -6,6 +6,7 @@ import { ChatProvider } from './contexts/ChatContext';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
+import { OfflineIndicator } from './components/offline/OfflineIndicator';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -35,6 +36,7 @@ function App() {
             <Router>
               <div className="min-h-screen bg-gray-50 flex flex-col">
                 <Header />
+                <OfflineIndicator />
                 
                 <main className="flex-1">
                   <Routes>
