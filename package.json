@@ -3,11 +3,18 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "description": "L'application révolutionnaire qui connecte la diaspora pour le transport de colis",
+  "keywords": ["diaspora", "transport", "colis", "africa", "europe"],
+  "author": "KiloConnect Team",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
   },
   "dependencies": {
     "lucide-react": "^0.344.0",
@@ -30,6 +37,21 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
-    "vite": "^5.4.2"
-  }
+    "vite": "^5.4.2",
+    "vitest": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kiloconnect/diaspora-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kiloconnect/diaspora-app/issues"
+  },
+  "homepage": "https://kiloconnect.com"
 }

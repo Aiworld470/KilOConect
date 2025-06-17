@@ -23,6 +23,8 @@ import ReviewsPage from './pages/ReviewsPage';
 import CreateTripPage from './pages/CreateTripPage';
 import SettingsPage from './pages/SettingsPage';
 import HelpCenterPage from './pages/HelpCenterPage';
+import LegalPages from './pages/LegalPages';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
@@ -52,6 +54,15 @@ function App() {
                     <Route path="/tracking" element={<TrackingPage />} />
                     <Route path="/reviews" element={<ReviewsPage />} />
                     <Route path="/help" element={<HelpCenterPage />} />
+                    
+                    {/* Legal Pages */}
+                    <Route path="/terms" element={<LegalPages />} />
+                    <Route path="/privacy" element={<LegalPages />} />
+                    <Route path="/cookies" element={<LegalPages />} />
+                    <Route path="/legal" element={<LegalPages />} />
+                    
+                    {/* Admin */}
+                    <Route path="/admin" element={<AdminDashboard />} />
                   </Routes>
                 </main>
                 
