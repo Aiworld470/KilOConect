@@ -6,7 +6,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { DestinationAutocomplete } from '../components/ui/DestinationAutocomplete';
 import { PricingIntelligent } from '../components/ui/PricingIntelligent';
 import { POPULAR_ORIGINS, POPULAR_DESTINATIONS } from '../data/destinations';
-import { SecurityApproach } from '../components/security/SecurityApproach';
 
 const CreateTripPage: React.FC = () => {
   const navigate = useNavigate();
@@ -260,7 +259,7 @@ const CreateTripPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Pricing IA - CORRECTION CRITIQUE */}
+          {/* Pricing IA avec message transporteur intégré */}
           {tripData.origin && tripData.destination && (
             <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">
               <PricingIntelligent
@@ -272,9 +271,6 @@ const CreateTripPage: React.FC = () => {
               />
             </div>
           )}
-
-          {/* Security Approach for Transporters */}
-          <SecurityApproach userType="transporter" />
 
           {/* Transport Conditions */}
           <div className="bg-white rounded-2xl shadow-card border border-gray-100 p-6">

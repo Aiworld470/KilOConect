@@ -248,51 +248,51 @@ export const PricingIntelligent: React.FC<PricingIntelligentProps> = ({
         })}
       </div>
 
-      {/* NOUVELLE APPROCHE SÉCURITÉ - SANS ASSURANCE */}
-      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6">
+      {/* MESSAGE TRANSPORTEUR INTÉGRÉ */}
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-2xl p-6">
         <div className="flex items-center space-x-3 mb-4">
-          <Shield className="h-5 w-5 text-green-600" />
-          <h3 className="font-medium text-green-900">🛡️ Sécurité par confiance</h3>
+          <Shield className="h-5 w-5 text-blue-600" />
+          <h3 className="font-medium text-blue-900">🛡️ Responsabilités du transporteur</h3>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div className="flex items-start space-x-3">
-            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mt-0.5">
-              <span className="text-green-600 text-lg">🆔</span>
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mt-0.5">
+              <span className="text-blue-600 text-lg">📦</span>
             </div>
             <div>
-              <h4 className="font-medium text-green-800">Vérification identité</h4>
-              <p className="text-sm text-green-700">Tous les transporteurs vérifiés</p>
+              <h4 className="font-medium text-blue-800">Soin des colis</h4>
+              <p className="text-sm text-blue-700">Manipulation soigneuse requise</p>
             </div>
           </div>
           
           <div className="flex items-start space-x-3">
-            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mt-0.5">
-              <span className="text-green-600 text-lg">⭐</span>
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mt-0.5">
+              <span className="text-blue-600 text-lg">⭐</span>
             </div>
             <div>
-              <h4 className="font-medium text-green-800">Système de notation</h4>
-              <p className="text-sm text-green-700">Transparence totale sur historique</p>
+              <h4 className="font-medium text-blue-800">Réputation</h4>
+              <p className="text-sm text-blue-700">Vos avis impactent vos revenus</p>
             </div>
           </div>
           
           <div className="flex items-start space-x-3">
-            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mt-0.5">
-              <span className="text-green-600 text-lg">📍</span>
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mt-0.5">
+              <span className="text-blue-600 text-lg">⚖️</span>
             </div>
             <div>
-              <h4 className="font-medium text-green-800">Suivi temps réel</h4>
-              <p className="text-sm text-green-700">Visibilité complète trajet</p>
+              <h4 className="font-medium text-blue-800">Obligations légales</h4>
+              <p className="text-sm text-blue-700">Respect des règles douanières</p>
             </div>
           </div>
           
           <div className="flex items-start space-x-3">
-            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mt-0.5">
-              <span className="text-green-600 text-lg">🤝</span>
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mt-0.5">
+              <span className="text-blue-600 text-lg">💬</span>
             </div>
             <div>
-              <h4 className="font-medium text-green-800">Médiation gratuite</h4>
-              <p className="text-sm text-green-700">Résolution conflits par équipe</p>
+              <h4 className="font-medium text-blue-800">Communication</h4>
+              <p className="text-sm text-blue-700">Informez de tout retard/problème</p>
             </div>
           </div>
         </div>
@@ -301,12 +301,11 @@ export const PricingIntelligent: React.FC<PricingIntelligentProps> = ({
           <div className="flex items-start space-x-3">
             <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
             <div>
-              <h4 className="font-medium text-yellow-800 mb-1">⚠️ Important</h4>
+              <h4 className="font-medium text-yellow-800 mb-1">⚠️ Responsabilité</h4>
               <p className="text-sm text-yellow-700">
-                Le transport s'effectue aux risques de l'expéditeur. 
-                KiloConnect facilite la mise en relation mais ne garantit 
-                pas la livraison. Vérifiez soigneusement le profil 
-                du transporteur avant envoi.
+                En tant que transporteur, vous êtes responsable des colis qui vous sont confiés. 
+                Tout dommage ou perte pourrait affecter votre réputation et vos revenus futurs. 
+                Communiquez régulièrement avec l'expéditeur.
               </p>
             </div>
           </div>
@@ -314,15 +313,15 @@ export const PricingIntelligent: React.FC<PricingIntelligentProps> = ({
       </div>
 
       {/* Strategy Explanation */}
-      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+      <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
         <div className="flex items-center space-x-3 mb-4">
-          <Info className="h-6 w-6 text-blue-600" />
-          <h4 className="font-medium text-blue-900">
+          <Info className="h-6 w-6 text-gray-600" />
+          <h4 className="font-medium text-gray-900">
             💡 Stratégies de positionnement
           </h4>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-blue-800">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-800">
           <div>
             <strong>Économique :</strong> Maximisez vos réservations avec des prix compétitifs
           </div>
